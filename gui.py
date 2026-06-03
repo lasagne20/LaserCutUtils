@@ -1,7 +1,5 @@
 """
-gui.py — PySide dialog for the tab-and-slot tool, and the top-level entry point.
-
-Call ``add_tabs_on_selected_face()`` from a FreeCAD macro or toolbar button.
+gui.py — PySide dialog for the tab-and-slot tool.
 """
 from __future__ import annotations
 
@@ -9,8 +7,7 @@ import FreeCAD
 import FreeCADGui
 from PySide import QtCore, QtGui
 
-from .core import TabParams
-from .freecad_ops import generate_tabs_and_holes
+from freecad_ops import generate_tabs_and_holes
 
 
 # ---------------------------------------------------------------------------
@@ -90,8 +87,6 @@ def add_tabs_on_selected_face(tab_width: float = 5.0, tab_height: float = 5.0,
                                tab_hole_clearance: float = 0.6) -> None:
     """
     Read the current FreeCAD face selection, show the dialog, and generate tabs.
-
-    Designed to be called from a macro or toolbar button.
     """
     sel = FreeCADGui.Selection.getSelectionEx()
     if not sel or not sel[0].HasSubObjects:
@@ -126,8 +121,6 @@ def add_tabs_on_selected_face(tab_width: float = 5.0, tab_height: float = 5.0,
     )
 
     if pad and pocket:
-        FreeCAD.Console.PrintMessage(
-            f"Tabs generated: {pad.Label}, {pocket.Label}\n"
-        )
+        FreeCAD.Console.PrintMessage(f"Tabs generated: {pad.Label}, {pocket.Label}\n")
     else:
         FreeCAD.Console.PrintError("Failed to generate tabs.\n")

@@ -12,10 +12,9 @@ import re
 import FreeCAD
 import FreeCADGui
 import Draft
-import importSVG
 from PySide import QtGui
 
-from .core import build_svg, wire_to_svg_path, Vec2
+from core import build_svg, wire_to_svg_path, Vec2
 
 
 # ---------------------------------------------------------------------------
@@ -29,7 +28,6 @@ def _arc_path(edge, x0, y0, x1, y1) -> list[str]:
     cx = curve.Center.x
     cy = -curve.Center.y
 
-    # Full circle → two half-arcs
     if abs(x0 - x1) < 1e-6 and abs(y0 - y1) < 1e-6:
         t_mid = (edge.FirstParameter + edge.LastParameter) / 2
         pm = edge.valueAt(t_mid)
@@ -137,7 +135,6 @@ def export_projection_to_svg(obj, output_path: str, rotate: bool = False,
     if not hasattr(obj, "Shape") or obj.Shape.isNull():
         raise ValueError(f"Object {obj.Label!r} has no valid Shape.")
 
-    # Determine projection normal (largest face)
     faces_sorted = sorted(obj.Shape.Faces, key=lambda f: f.Area, reverse=True)
     normal = faces_sorted[0].normalAt(0.5, 0.5)
 
@@ -175,7 +172,6 @@ def export_projection_to_svg(obj, output_path: str, rotate: bool = False,
         export_objs.append(sk_proj)
         color_map[sk_proj] = rgb
 
-    # Compute viewBox from bounding box of all projected shapes
     import Part as _Part
     all_shapes = [o.Shape for o in export_objs
                   if hasattr(o, "Shape") and not o.Shape.isNull()]
@@ -226,13 +222,11 @@ def export_projection_to_svg(obj, output_path: str, rotate: bool = False,
     with open(output_path, "w", encoding="utf-8") as fh:
         fh.write("\n".join(svg_parts))
 
-    # Store path on object
     if not hasattr(obj, "SVGPath"):
         obj.addProperty("App::PropertyString", "SVGPath", "Base",
                         "Path to exported SVG file")
     obj.SVGPath = output_path
 
-    # Clean up temporary projection objects
     for o in export_objs:
         doc.removeObject(o.Name)
     doc.recompute()

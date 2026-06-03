@@ -10,7 +10,7 @@ import Part
 import Sketcher
 from FreeCAD import Vector
 
-from .core import TabParams, Vec2, compute_tab_centers
+from core import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
 
 
 # ---------------------------------------------------------------------------
@@ -58,7 +58,6 @@ def find_opposite_face(obj, face, body, tol: float = 0.5):
         if body.getParentGeoFeatureGroup() != body_cand.getParentGeoFeatureGroup():
             continue
 
-        # Skip non-solid feature types
         _skip_prefixes = (
             "Sketcher::", "PartDesign::Datum", "PartDesign::CoordinateSystem",
             "PartDesign::Plane", "PartDesign::Line", "PartDesign::Point",
@@ -99,7 +98,6 @@ def find_opposite_face(obj, face, body, tol: float = 0.5):
     if not candidate_objs:
         return None, None
 
-    # Among all candidate faces, take the two largest and return the closest.
     all_faces = [(c, f) for c in candidate_objs for f in c.Shape.Faces]
     top2 = sorted(all_faces, key=lambda x: x[1].Area, reverse=True)[:2]
     best = min(top2, key=lambda x: x[1].distToShape(face)[0])
@@ -190,7 +188,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
     doc.openTransaction("Generate Tabs")
 
     try:
-        # --- optional VarSet --------------------------------------------------
         width_var = height_var = spacing_var = clearance_var = None
         if use_variables:
             varset = body.newObject("App::VarSet", "TabsParameters")
@@ -199,7 +196,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
             spacing_var  = add_or_update_var(varset, "Spacing",       tab_spacing)
             clearance_var = add_or_update_var(varset, "HoleClearance", tab_hole_clearance)
 
-        # --- tab sketch -------------------------------------------------------
         sketch = body.newObject("Sketcher::SketchObject", "TabSketch")
         if face_name:
             sketch.AttachmentSupport = (obj, [face_name])
@@ -212,7 +208,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
         sketch.MapMode = "FlatFace"
         body.recompute()
 
-        # Two longest edges as external reference geometry
         edges_sorted = sorted(face.Edges, key=lambda e: e.Length, reverse=True)
         ref1, ref2 = edges_sorted[0], edges_sorted[1]
 
@@ -232,7 +227,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
 
         body.recompute()
 
-        # Resolve edge endpoints from external geometry
         try:
             p1 = sketch.getPoint(-3, 1)
             p2 = sketch.getPoint(-3, 2)
@@ -252,13 +246,11 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
         geom_pt2 = sketch.getPoint(-3, 2)
         p1_is_point1 = (geom_pt1 - p1).Length < (geom_pt2 - p1).Length
 
-        # Compute centres using core (pure-Python) helper
         p1_2d = Vec2(p1.x, p1.y)
         p2_2d = Vec2(p2.x, p2.y)
         tab_centers_2d = compute_tab_centers(p1_2d, p2_2d, params)
         num_tabs = len(tab_centers_2d)
 
-        from .core import compute_tab_count, compute_tab_offset
         length = (p2_2d - p1_2d).length()
         dir_vec_2d = (p2_2d - p1_2d).normalize()
         perp_vec_2d = dir_vec_2d.perpendicular()
@@ -313,18 +305,17 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
 
             if n == 0:
                 calculated_offset = compute_tab_offset(length, num_tabs, tab_width, tab_spacing)
+                ref_pt = 1 if l1_direction_positive else 2
                 if spacing_var:
                     expr = (
                         f"({length}mm - round({length}mm / ({width_var} + {spacing_var})) * {width_var}"
                         f" - (round({length}mm / ({width_var} + {spacing_var})) - 1) * {spacing_var}) / 2"
                     )
-                    ref_pt = 1 if l1_direction_positive else 2
                     idx_s = sketch.addConstraint(
                         Sketcher.Constraint("Distance", -3, edge_start_point, l1, ref_pt, tab_spacing / 2)
                     )
                     sketch.setExpression(f"Constraints[{idx_s}]", expr)
                 else:
-                    ref_pt = 1 if l1_direction_positive else 2
                     sketch.addConstraint(
                         Sketcher.Constraint("Distance", -3, edge_start_point, l1, ref_pt, calculated_offset)
                     )
@@ -336,13 +327,11 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
                 if spacing_var:
                     sketch.setExpression(f"Constraints[{idx_s}]", spacing_var)
 
-        # --- Pad --------------------------------------------------------------
         pad = body.newObject("PartDesign::Pad", "TabPad")
         pad.Profile = sketch
         pad.Length = tab_height
         body.recompute()
 
-        # Find opposite face index
         face_index = None
         for idx, f in enumerate(other_obj.Shape.Faces):
             if (f.CenterOfMass.sub(other_face.CenterOfMass).Length < 1e-6 and
@@ -356,7 +345,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
 
         FreeCAD.ActiveDocument.recompute()
 
-        # Bind only the top tab faces
         sketch_pl = sketch.getGlobalPlacement()
         pad_faces_to_bind = []
         for fi, f in enumerate(pad.Shape.Faces):
@@ -374,7 +362,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
             FreeCAD.Console.PrintError("No pad face found at tab height.\n")
             return None, None
 
-        # --- ShapeBinder + hole sketch ----------------------------------------
         binder = other_body.newObject("PartDesign::ShapeBinder", "TabBinder")
         binder.Support = [(pad, pad_faces_to_bind)]
         binder.TraceSupport = True
@@ -394,7 +381,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
             doc.abortTransaction()
             return None, None
 
-        # Direction detection for hole orientation
         dir_global = sketch.getGlobalPlacement().Rotation.multVec(Vector(dir_vec_2d.x, dir_vec_2d.y, 0))
         dir_in_sk2  = sketch2.getGlobalPlacement().Rotation.inverted().multVec(dir_global)
         horiz_is_width = abs(dir_in_sk2.x) > abs(dir_in_sk2.y)
@@ -477,7 +463,6 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
                     Sketcher.Constraint("PointOnObject", lock_edge, 1, v_edges[0][0])
                 )
 
-        # --- Pocket -----------------------------------------------------------
         pocket = other_body.newObject("PartDesign::Pocket", "TabHolePocket")
         pocket.Profile = sketch2
         pocket.Length = tab_width

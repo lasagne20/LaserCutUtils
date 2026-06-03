@@ -15,7 +15,7 @@ dev = ["pytest>=7.4", "pytest-cov"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
-pythonpath = ["src"]
+pythonpath = ["."]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]

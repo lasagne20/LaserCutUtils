@@ -6,7 +6,7 @@ from __future__ import annotations
 import math
 import pytest
 
-from laser_cut_utils.core import (
+from core import (
     Vec2,
     TabParams,
     TabRect,

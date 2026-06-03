@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Sheet outline -->
+  <rect x="6" y="6" width="52" height="52" rx="2"
+        fill="none" stroke="#4a90d9" stroke-width="3"/>
+  <!-- Inner shape suggestion -->
+  <rect x="16" y="16" width="32" height="32" rx="1"
+        fill="none" stroke="#4a90d9" stroke-width="2" stroke-dasharray="4,3"/>
+  <!-- SVG label -->
+  <text x="32" y="36" font-family="sans-serif" font-size="12"
+        font-weight="bold" fill="#e07020" text-anchor="middle">SVG</text>
+</svg>
