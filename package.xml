@@ -4,9 +4,9 @@
   <description>Tab-and-slot joinery and SVG export for laser cutting, as a FreeCAD workbench.</description>
   <version>0.1.0</version>
   <date>2026-10-20</date>
-  <maintainer email="you@example.com">TODO Your Name</maintainer>
+  <maintainer email="leo.dupontrenoux@gmail.com">Léo Dupont</maintainer>
   <license>LGPL-2.1-or-later</license>
-  <url type="repository" branch="main">https://github.com/YOUR_GITHUB_USERNAME/LaserCutUtils</url>
+  <url type="repository" branch="main">https://github.com/lasagne20/LaserCutUtils.git</url>
   <icon>icons/LaserCutUtils.svg</icon>
   <freecadmin>1.0</freecadmin>
   <content>
