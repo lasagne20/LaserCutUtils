@@ -25,13 +25,21 @@ FreeCAD workbench for **laser-cut tab-and-slot joinery** and **SVG projection ex
 
 ### Manual
 
-Copy (or clone) this folder into your FreeCAD user modules directory:
+Clone (or copy) this repository into your FreeCAD user modules directory:
 
 - Windows: `%APPDATA%/FreeCAD/Mod/LaserCutUtils`
 - Linux: `~/.local/share/FreeCAD/Mod/LaserCutUtils`
 - macOS: `~/Library/Application Support/FreeCAD/Mod/LaserCutUtils`
 
 Restart FreeCAD and select the **Laser Cut Utils** workbench.
+
+### pip
+
+```bash
+pip install git+https://github.com/lasagne20/LaserCutUtils.git
+```
+
+Use the same Python/pip that FreeCAD uses on your system.
 
 ## Usage
 
@@ -58,21 +66,14 @@ opposite body.
 1. Select one or more objects with a `Shape`.
 2. **Laser Cut Utils → Export SVG**, choose the output folder.
 
-Each object is written as `<Label>.svg`. `export_projection_to_svg()` can also be called
-from a macro for scripted use:
+Each object is written as `<Label>.svg`.
+
+### From a macro
+
+All entry points are importable from the `freecad.LaserCutUtils` namespace:
 
 ```python
-import sys
-sys.path.insert(0, r"C:\path\to\Mod")  # folder containing LaserCutUtils
-
-from LaserCutUtils.svg_export import export_projection_to_svg
-export_projection_to_svg(obj, r"C:\out\piece.svg")
-```
-
-Tabs can be generated programmatically as well:
-
-```python
-from LaserCutUtils.freecad_ops import generate_tabs_and_holes
+from freecad.LaserCutUtils.freecad_ops import generate_tabs_and_holes
 
 pad, pocket = generate_tabs_and_holes(
     obj, face, body,
@@ -80,22 +81,33 @@ pad, pocket = generate_tabs_and_holes(
 )
 ```
 
+```python
+from freecad.LaserCutUtils.svg_export import export_projection_to_svg
+
+export_projection_to_svg(obj, r"C:\out\piece.svg")
+```
+
 ## Project layout
+
+Modern namespaced layout (`freecad/` is a PEP 420 namespace package shared by all addons):
 
 ```
 LaserCutUtils/
-├── Init.py               # Workbench init (called by FreeCAD)
-├── InitGui.py            # Workbench + toolbar registration
-├── commands.py           # FreeCAD command classes
-├── gui.py                # PySide parameter dialog
-├── freecad_ops.py        # PartDesign/Sketcher tab-and-slot operations
-├── svg_export.py         # Draft projection → SVG file
-├── utils.py              # Pure-Python geometry (no FreeCAD import)
-├── icons/
-├── tests/
-│   ├── conftest.py       # FreeCAD stub modules for pytest
-│   └── test_core.py      # Unit tests (no FreeCAD required)
-└── package.xml           # FreeCAD Add-on Manager metadata
+├── package.xml                    # FreeCAD Add-on Manager metadata
+├── freecad/
+│   └── LaserCutUtils/
+│       ├── __init__.py
+│       ├── init_gui.py            # Workbench + toolbar registration
+│       ├── commands.py            # FreeCAD command classes
+│       ├── gui.py                 # PySide parameter dialog
+│       ├── freecad_ops.py         # PartDesign/Sketcher tab-and-slot operations
+│       ├── svg_export.py          # Draft projection → SVG file
+│       ├── utils.py               # Pure-Python geometry (no FreeCAD import)
+│       └── resources/
+│           └── icons/
+└── tests/
+    ├── conftest.py                # FreeCAD stub modules for pytest
+    └── test_core.py               # Unit tests (no FreeCAD required)
 ```
 
 ## Development

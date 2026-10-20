@@ -2,15 +2,21 @@
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>LaserCutUtils</name>
   <description>Tab-and-slot joinery and SVG export for laser cutting, as a FreeCAD workbench.</description>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <date>2026-10-20</date>
   <maintainer email="leo.dupontrenoux@gmail.com">Léo Dupont</maintainer>
-  <license>LGPL-2.1-or-later</license>
-  <url type="repository" branch="main">https://github.com/lasagne20/LaserCutUtils.git</url>
-  <icon>icons/LaserCutUtils.svg</icon>
+  <license file="LICENSE">LGPL-2.1-or-later</license>
+  <url type="repository" branch="main">https://github.com/lasagne20/LaserCutUtils</url>
+  <url type="bugtracker">https://github.com/lasagne20/LaserCutUtils/issues</url>
+  <url type="readme">https://raw.githubusercontent.com/lasagne20/LaserCutUtils/main/README.md</url>
+  <icon>freecad/LaserCutUtils/resources/icons/LaserCutUtils.svg</icon>
   <freecadmin>1.0</freecadmin>
   <content>
-    <workbench classname="LaserCutUtilsWorkbench"/>
+    <workbench>
+      <name>LaserCutUtils</name>
+      <classname>LaserCutUtilsWorkbench</classname>
+      <subdirectory>freecad/LaserCutUtils</subdirectory>
+    </workbench>
   </content>
   <tags>
     <tag>laser-cut</tag>

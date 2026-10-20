@@ -8,7 +8,7 @@ import os
 import FreeCAD
 import FreeCADGui
 
-_ICONS = os.path.join(os.path.dirname(__file__), "icons")
+_ICONS = os.path.join(os.path.dirname(__file__), "resources", "icons")
 
 
 class _CmdGenerateTabs:
@@ -22,10 +22,7 @@ class _CmdGenerateTabs:
         }
 
     def Activated(self):
-        try:
-            from .gui import add_tabs_on_selected_face
-        except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
-            from gui import add_tabs_on_selected_face
+        from freecad.LaserCutUtils.gui import add_tabs_on_selected_face
         add_tabs_on_selected_face()
 
     def IsActive(self):
@@ -43,10 +40,7 @@ class _CmdExportSVG:
         }
 
     def Activated(self):
-        try:
-            from .svg_export import export_projection_to_svg
-        except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
-            from svg_export import export_projection_to_svg
+        from freecad.LaserCutUtils.svg_export import export_projection_to_svg
         from PySide import QtGui
 
         sel = FreeCADGui.Selection.getSelection()

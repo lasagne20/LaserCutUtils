@@ -10,10 +10,13 @@ import Part
 import Sketcher
 from FreeCAD import Vector
 
-try:
-    from .utils import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
-except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
-    from utils import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
+from freecad.LaserCutUtils.utils import (
+    TabParams,
+    Vec2,
+    compute_tab_centers,
+    compute_tab_count,
+    compute_tab_offset,
+)
 
 
 # ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 """
-InitGui.py — Registers the LaserCutUtils workbench and its commands with FreeCAD.
+init_gui.py — Registers the LaserCutUtils workbench and its commands with FreeCAD.
 """
 import os
 import FreeCADGui
@@ -10,14 +10,11 @@ class LaserCutUtilsWorkbench(Workbench):
 
     MenuText = "Laser Cut Utils"
     ToolTip  = "Tab-and-slot joinery and SVG export for laser cutting"
-    Icon     = os.path.join(os.path.dirname(__file__), "icons", "LaserCutUtils.svg")
+    Icon     = os.path.join(os.path.dirname(__file__), "resources", "icons", "LaserCutUtils.svg")
 
     def Initialize(self):
         """Called once when the workbench is first activated."""
-        try:
-            from LaserCutUtils import commands  # registers FreeCAD commands as a side effect
-        except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
-            import commands
+        from freecad.LaserCutUtils import commands  # registers FreeCAD commands as a side effect
         self.list = [
             "LaserCutUtils_GenerateTabs",
             "LaserCutUtils_ExportSVG",

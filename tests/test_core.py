@@ -1,12 +1,12 @@
 """
-test_core.py — Unit tests for laser_cut_utils.core (pure Python, no FreeCAD).
+test_core.py — Unit tests for freecad.LaserCutUtils.utils (pure Python, no FreeCAD).
 """
 from __future__ import annotations
 
 import math
 import pytest
 
-from utils import (
+from freecad.LaserCutUtils.utils import (
     Vec2,
     TabParams,
     TabRect,

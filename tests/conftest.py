@@ -2,8 +2,8 @@
 conftest.py — Pytest fixtures and FreeCAD stub modules.
 
 All tests in this suite run without a FreeCAD installation.  The stubs below
-provide just enough surface area to exercise the pure-Python logic in core.py
-and the lightweight geometry helpers tested here.
+provide just enough surface area to exercise the pure-Python logic in
+freecad.LaserCutUtils.utils and the lightweight geometry helpers tested here.
 """
 from __future__ import annotations
 
