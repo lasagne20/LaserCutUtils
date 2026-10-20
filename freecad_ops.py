@@ -10,7 +10,10 @@ import Part
 import Sketcher
 from FreeCAD import Vector
 
-from LaserCutUtils.utils import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
+try:
+    from .utils import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
+except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
+    from utils import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
 
 
 # ---------------------------------------------------------------------------
@@ -360,6 +363,7 @@ def generate_tabs_and_holes(obj, face, body, face_name: str | None = None,
 
         if not pad_faces_to_bind:
             FreeCAD.Console.PrintError("No pad face found at tab height.\n")
+            doc.abortTransaction()
             return None, None
 
         binder = other_body.newObject("PartDesign::ShapeBinder", "TabBinder")

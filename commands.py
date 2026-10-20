@@ -22,7 +22,10 @@ class _CmdGenerateTabs:
         }
 
     def Activated(self):
-        from gui import add_tabs_on_selected_face
+        try:
+            from .gui import add_tabs_on_selected_face
+        except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
+            from gui import add_tabs_on_selected_face
         add_tabs_on_selected_face()
 
     def IsActive(self):
@@ -40,7 +43,10 @@ class _CmdExportSVG:
         }
 
     def Activated(self):
-        from svg_export import export_projection_to_svg
+        try:
+            from .svg_export import export_projection_to_svg
+        except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
+            from svg_export import export_projection_to_svg
         from PySide import QtGui
 
         sel = FreeCADGui.Selection.getSelection()

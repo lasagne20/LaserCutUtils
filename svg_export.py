@@ -1,7 +1,7 @@
 """
 svg_export.py — Export a FreeCAD Part shape projection to an SVG file.
 
-Requires FreeCAD GUI (Draft, importSVG) to be available.
+Requires a running FreeCAD environment (Draft, Part).
 """
 from __future__ import annotations
 
@@ -10,11 +10,7 @@ import os
 import re
 
 import FreeCAD
-import FreeCADGui
 import Draft
-from PySide import QtGui
-
-from LaserCutUtils.utils import build_svg, wire_to_svg_path, Vec2
 
 
 # ---------------------------------------------------------------------------

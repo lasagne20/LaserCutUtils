@@ -1,5 +1,5 @@
 """
-core.py — Pure-Python geometry helpers for tab-and-slot generation.
+utils.py — Pure-Python geometry helpers for tab-and-slot generation.
 
 No FreeCAD imports: all functions work on plain (x, y) tuples so they
 can be unit-tested without a FreeCAD installation.

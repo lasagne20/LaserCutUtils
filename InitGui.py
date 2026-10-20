@@ -14,7 +14,10 @@ class LaserCutUtilsWorkbench(Workbench):
 
     def Initialize(self):
         """Called once when the workbench is first activated."""
-        import commands  # registers FreeCAD commands as a side effect
+        try:
+            from LaserCutUtils import commands  # registers FreeCAD commands as a side effect
+        except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
+            import commands
         self.list = [
             "LaserCutUtils_GenerateTabs",
             "LaserCutUtils_ExportSVG",

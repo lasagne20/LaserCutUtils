@@ -1,74 +1,112 @@
 # LaserCutUtils
 
-FreeCAD utilities for **laser-cut tab-and-slot joinery** and SVG projection export.
+FreeCAD workbench for **laser-cut tab-and-slot joinery** and **SVG projection export**.
+
+[License: LGPL-2.1-or-later](LICENSE) | Requires **FreeCAD ≥ 1.0** (uses `AttachmentSupport` and `App::VarSet`).
 
 ## Features
 
-- **Tab generation** — selects a face, finds the opposite face on an adjacent body, and generates parametric tabs (Pad) + matching slots (Pocket) with configurable width, spacing, and clearance.
-- **SVG export** — projects a Part/PartDesign solid along its largest face normal and writes a clean SVG file ready for laser-cutting.
-- **Pure-Python core** — geometry helpers in `core.py` have no FreeCAD dependency and are fully unit-tested with pytest.
+- **Generate Tabs** — select a face, the workbench finds the opposite face on an adjacent
+  body (same assembly) and generates parametric tabs (Pad) plus matching slots (Pocket)
+  with configurable width, spacing, and clearance. Optional VarSet-backed parameters for
+  fully parametric editing via expressions.
+- **Export SVG** — projects a Part/PartDesign solid along its largest face normal
+  (lines, arcs, and splines supported) and writes a clean, mm-accurate SVG file ready
+  for laser cutting, with optional colored sketch overlays.
+- **Pure-Python core** — geometry helpers in `utils.py` have no FreeCAD dependency and
+  are fully unit-tested with pytest.
+
+## Installation
+
+### From the FreeCAD Add-on Manager
+
+1. FreeCAD → **Tools → Add-on Manager**
+2. Search for **LaserCutUtils** and install.
+
+### Manual
+
+Copy (or clone) this folder into your FreeCAD user modules directory:
+
+- Windows: `%APPDATA%/FreeCAD/Mod/LaserCutUtils`
+- Linux: `~/.local/share/FreeCAD/Mod/LaserCutUtils`
+- macOS: `~/Library/Application Support/FreeCAD/Mod/LaserCutUtils`
+
+Restart FreeCAD and select the **Laser Cut Utils** workbench.
+
+## Usage
+
+### Generate Tabs
+
+1. Select a face on a PartDesign feature that sits inside a PartDesign Body,
+   opposite another body of the same assembly.
+2. **Laser Cut Utils → Generate Tabs**
+3. Adjust the parameters in the dialog:
+
+| Parameter | Default | Description |
+|---|---|---|
+| Material thickness | 5 mm | Height of each tab (= material thickness) |
+| Tab width | 10 mm | Width of each tab |
+| Tab spacing | 20 mm | Gap between consecutive tabs |
+| Hole clearance | 0.6 mm | Clearance subtracted from the slot width |
+| Use variables (VarSet) | off | Store the parameters in a VarSet for parametric editing |
+
+Tabs (Pad) are created on the selected body; matching slots (Pocket) are cut into the
+opposite body.
+
+### Export SVG
+
+1. Select one or more objects with a `Shape`.
+2. **Laser Cut Utils → Export SVG**, choose the output folder.
+
+Each object is written as `<Label>.svg`. `export_projection_to_svg()` can also be called
+from a macro for scripted use:
+
+```python
+import sys
+sys.path.insert(0, r"C:\path\to\Mod")  # folder containing LaserCutUtils
+
+from LaserCutUtils.svg_export import export_projection_to_svg
+export_projection_to_svg(obj, r"C:\out\piece.svg")
+```
+
+Tabs can be generated programmatically as well:
+
+```python
+from LaserCutUtils.freecad_ops import generate_tabs_and_holes
+
+pad, pocket = generate_tabs_and_holes(
+    obj, face, body,
+    tab_width=10, tab_height=5, tab_spacing=20, tab_hole_clearance=0.6,
+)
+```
 
 ## Project layout
 
 ```
 LaserCutUtils/
-├── src/
-│   └── laser_cut_utils/
-│       ├── __init__.py
-│       ├── core.py          # Pure-Python geometry (Vec2, tab layout, SVG primitives)
-│       ├── freecad_ops.py   # FreeCAD Sketcher/PartDesign operations
-│       ├── svg_export.py    # Draft projection → SVG file
-│       └── gui.py           # PySide dialog + entry point
+├── Init.py               # Workbench init (called by FreeCAD)
+├── InitGui.py            # Workbench + toolbar registration
+├── commands.py           # FreeCAD command classes
+├── gui.py                # PySide parameter dialog
+├── freecad_ops.py        # PartDesign/Sketcher tab-and-slot operations
+├── svg_export.py         # Draft projection → SVG file
+├── utils.py              # Pure-Python geometry (no FreeCAD import)
+├── icons/
 ├── tests/
-│   ├── conftest.py          # FreeCAD stub modules for pytest
-│   └── test_core.py         # Unit tests (no FreeCAD required)
-├── pyproject.toml
-└── .gitignore
+│   ├── conftest.py       # FreeCAD stub modules for pytest
+│   └── test_core.py      # Unit tests (no FreeCAD required)
+└── package.xml           # FreeCAD Add-on Manager metadata
 ```
 
-## Installation (development)
+## Development
+
+Tests run without a FreeCAD installation — stub modules are injected by `tests/conftest.py`:
 
 ```bash
-python -m venv .venv
-.venv\Scripts\activate          # Windows
-pip install -e ".[dev]"
+python -m pip install pytest
+python -m pytest
 ```
 
-## Running tests
+## License
 
-```bash
-pytest
-```
-
-All tests in `tests/test_core.py` run without FreeCAD — stubs are injected by `conftest.py`.
-
-## Usage from a FreeCAD macro
-
-```python
-import sys
-sys.path.insert(0, r"C:\path\to\LaserCutUtils\src")
-
-from laser_cut_utils.gui import add_tabs_on_selected_face
-add_tabs_on_selected_face()
-```
-
-Or call `generate_tabs_and_holes()` directly for scripted use:
-
-```python
-from laser_cut_utils.freecad_ops import generate_tabs_and_holes
-
-pad, pocket = generate_tabs_and_holes(
-    obj, face, body,
-    tab_width=10, tab_height=5, tab_spacing=20, tab_hole_clearance=0.6
-)
-```
-
-## Parameters
-
-| Parameter | Default | Description |
-|---|---|---|
-| `tab_width` | 10 mm | Width of each tab |
-| `tab_height` | 5 mm | Height of each tab (= material thickness) |
-| `tab_spacing` | 20 mm | Gap between consecutive tabs |
-| `tab_hole_clearance` | 0.6 mm | Clearance subtracted from slot width |
-| `use_variables` | False | Store params in a FreeCAD VarSet |
+[GNU LGPL-2.1-or-later](LICENSE) — the same license as FreeCAD itself.

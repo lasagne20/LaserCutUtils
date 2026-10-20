@@ -3,11 +3,20 @@
   <name>LaserCutUtils</name>
   <description>Tab-and-slot joinery and SVG export for laser cutting, as a FreeCAD workbench.</description>
   <version>0.1.0</version>
-  <date>2026-06-03</date>
-  <maintainer email="">Dev</maintainer>
+  <date>2026-10-20</date>
+  <maintainer email="you@example.com">TODO Your Name</maintainer>
   <license>LGPL-2.1-or-later</license>
+  <url type="repository" branch="main">https://github.com/YOUR_GITHUB_USERNAME/LaserCutUtils</url>
   <icon>icons/LaserCutUtils.svg</icon>
+  <freecadmin>1.0</freecadmin>
   <content>
     <workbench classname="LaserCutUtilsWorkbench"/>
   </content>
+  <tags>
+    <tag>laser-cut</tag>
+    <tag>tab-and-slot</tag>
+    <tag>joinery</tag>
+    <tag>svg-export</tag>
+    <tag>woodworking</tag>
+  </tags>
 </package>

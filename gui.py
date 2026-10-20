@@ -7,7 +7,10 @@ import FreeCAD
 import FreeCADGui
 from PySide import QtCore, QtGui
 
-from freecad_ops import generate_tabs_and_holes
+try:
+    from .freecad_ops import generate_tabs_and_holes
+except ImportError:  # loaded as a top-level module (FreeCAD workbench layout)
+    from freecad_ops import generate_tabs_and_holes
 
 
 # ---------------------------------------------------------------------------
