@@ -14,7 +14,7 @@ import FreeCADGui
 import Draft
 from PySide import QtGui
 
-from core import build_svg, wire_to_svg_path, Vec2
+from LaserCutUtils.utils import build_svg, wire_to_svg_path, Vec2
 
 
 # ---------------------------------------------------------------------------

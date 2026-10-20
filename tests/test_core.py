@@ -6,7 +6,7 @@ from __future__ import annotations
 import math
 import pytest
 
-from core import (
+from utils import (
     Vec2,
     TabParams,
     TabRect,

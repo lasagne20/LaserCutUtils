@@ -10,7 +10,7 @@ import Part
 import Sketcher
 from FreeCAD import Vector
 
-from core import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
+from LaserCutUtils.utils import TabParams, Vec2, compute_tab_centers, compute_tab_count, compute_tab_offset
 
 
 # ---------------------------------------------------------------------------
