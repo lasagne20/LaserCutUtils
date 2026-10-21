@@ -5,7 +5,7 @@ import os
 import FreeCADGui
 
 
-class LaserCutUtilsWorkbench(Workbench):
+class LaserCutUtilsWorkbench(FreeCADGui.Workbench):
     """Tab-and-slot joinery and SVG export for laser cutting."""
 
     MenuText = "Laser Cut Utils"
